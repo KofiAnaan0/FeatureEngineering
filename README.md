@@ -33,7 +33,7 @@ Key steps in this notebook include:.
       diff.head()
      ```
 
-     ![offpeak](assets/offset.JPG)
+     ![offpeak](assets/off.JPG)
 
      ```python
      # Merging the engineered feature
@@ -41,13 +41,13 @@ Key steps in this notebook include:.
      df.head()
      ```
 
-     ![offpeak](assets/)
+     ![offpeak](assets/merge.JPG)
 
-     - **Average Price Changes Across Different Periods**
+   - **Average Price Changes Across Different Periods**
 
-       This feature provides more granularity by looking at the mean price differences between off-peak, peak, and mid-peak periods. It may reveal patterns across shorter timeframes             (monthly or seasonal fluctuations) that the December-January difference feature might miss.
+     This feature provides more granularity by looking at the mean price differences between off-peak, peak, and mid-peak periods. It may reveal patterns across shorter timeframes            (monthly or seasonal fluctuations) that the December-January difference feature might miss.
 
-       ```python
+     ```python
        # Aggregate average prices per period by company
          mean_prices = price_df.groupby(['id']).agg({
              'price_off_peak_var': 'mean', 
@@ -57,6 +57,7 @@ Key steps in this notebook include:.
              'price_peak_fix': 'mean',
              'price_mid_peak_fix': 'mean'    
          }).reset_index()
+       
        # Calculate the mean difference between consecutive periods
          mean_prices['off_peak_peak_var_mean_diff'] = mean_prices['price_off_peak_var'] - mean_prices['price_peak_var']
          mean_prices['peak_mid_peak_var_mean_diff'] = mean_prices['price_peak_var'] - mean_prices['price_mid_peak_var']
@@ -78,33 +79,33 @@ Key steps in this notebook include:.
          df.head()
        ```
 
-     ![offpeak](assets/)
+     ![offpeak](assets/avg.JPG)
 
-     - **Tenure**
+   - **Tenure**
 
-       How long a company has been a client of PowerCo.
+     How long a company has been a client of PowerCo.
 
        ```python
        df['tenure'] = ((df['date_end'] - df['date_activ'])/ np.timedelta64(1, 'D')/ 365.25).astype(int)
        df.groupby(['tenure']).agg({'churn': 'mean'}).sort_values(by='churn', ascending=False).head(3)
        ```
 
-       ![offpeak](assets/)
+     ![offpeak](assets/tenure.JPG)
 
-       We can see that companies who have only been a client for 4 or less months are much more likely to churn compared to companies that have been a client for longer. Interestingly,         the difference between 4 and 5 months is about 4%, which represents a large jump in likelihood for a customer to churn compared to the other differences between ordered tenure           values. Perhaps this reveals that getting a customer to over 4 months tenure is actually a large milestone with respect to keeping them as a long term customer.
+     We can see that companies who have only been a client for 4 or less months are much more likely to churn compared to companies that have been a client for longer. Interestingly,         the difference between 4 and 5 months is about 4%, which represents a large jump in likelihood for a customer to churn compared to the other differences between ordered tenure           values. Perhaps this reveals that getting a customer to over 4 months tenure is actually a large milestone with respect to keeping them as a long term customer.
 
-       This is an interesting feature to keep for modelling because clearly how long you've been a client, has a influence on the chance of a client churning.
+     This is an interesting feature to keep for modelling because clearly how long you've been a client, has a influence on the chance of a client churning.
    
-2. **Transforming dates into months**
+2. **Transforming dates into months:**
    Dates as a datetime object are not useful for a predictive model, so we needed to use the datetimes to create some other features that may hold some predictive power.
 
-   Using intuition, you could assume that a client who has been an active client of PowerCo for a longer amount of time may have more loyalty to the brand and is more likely to stay.       Whereas a newer client may be more volatile. Hence the addition of the months_activ feature.
+   - Using intuition, you could assume that a client who has been an active client of PowerCo for a longer amount of time may have more loyalty to the brand and is more likely to stay.       Whereas a newer client may be more volatile. Hence the addition of the months_activ feature.
    
-   As well as this, if we think from the perspective of a client with PowerCo, if you're coming toward the end of your contract with PowerCo your thoughts could go a few ways. You could    be looking for better deals for when your contract ends, or you might want to see out your contract and sign another one. One the other hand if you've only just joined, you may have     a period where you're allowed to leave if you're not satisfied. Furthermore, if you're in the middle of your contract, their may be charges if you wanted to leave, deterring clients     from churning mid-way through their agreement. So, I think months_to_end will be an interesting feature because it may reveal patterns and behaviours about timing of churn.
+   - As well as this, if we think from the perspective of a client with PowerCo, if you're coming toward the end of your contract with PowerCo your thoughts could go a few ways. You          could be looking for better deals for when your contract ends, or you might want to see out your contract and sign another one. One the other hand if you've only just joined, you        may have a period where you're allowed to leave if you're not satisfied. Furthermore, if you're in the middle of your contract, their may be charges if you wanted to leave,              deterring clients from churning mid-way through their agreement. So, I think months_to_end will be an interesting feature because it may reveal patterns and behaviours about timing      of churn.
    
-   My belief is that if a client has made recent updates to their contract, they are more likely to be satisfied or at least they have received a level of customer service to update or     change their existing services. I believe this to be a positive sign, they are an engaged customer, and so I believe months_modif_prod will be an interesting feature to include          because it shows the degree of how 'engaged' a client is with PowerCo.
+   - My belief is that if a client has made recent updates to their contract, they are more likely to be satisfied or at least they have received a level of customer service to update        or change their existing services. I believe this to be a positive sign, they are an engaged customer, and so I believe months_modif_prod will be an interesting feature to include       because it shows the degree of how 'engaged' a client is with PowerCo.
    
-   Finally the number of months since a client last renewed a contract I believe will be an interesting feature because once again, it shows the degree to which that client is engaged.     It also goes a step further than just engagement, it shows a level of commitment if a client renews their contract. For this reason, I believe months_renewal will be a good feature      to include.
+   - Finally the number of months since a client last renewed a contract I believe will be an interesting feature because once again, it shows the degree to which that client is              engaged. It also goes a step further than just engagement, it shows a level of commitment if a client renews their contract. For this reason, I believe months_renewal will be a          good feature to include.
 
    ```python
    # Converting dates to months
@@ -137,7 +138,7 @@ Key steps in this notebook include:.
    df.head()
    ```
    
-   ![offpeak](assets/)
+   ![offpeak](assets/dummy.JPG)
 
 4. **Transforming Boolean data:**
 
@@ -148,7 +149,7 @@ Key steps in this notebook include:.
    df['has_gas'] = df['has_gas'].replace(['t', 'f'], [1, 0])
    df.groupby(['has_gas']).agg({'churn': 'mean'})
    ```
-   ![offpeak](assets/)
+   ![offpeak](assets/bool.JPG)
 
    If a customer also buys gas from PowerCo, it shows that they have multiple products and are a loyal customer to the brand. Hence, it is no surprise that customers who do not buy gas     are almost 2% more likely to churn than customers who also buy gas from PowerCo. Hence, this is a useful feature.
 
@@ -167,7 +168,7 @@ Key steps in this notebook include:.
    df['channel_sales'].value_counts()
    ```
 
-   ![offpeak](assets/)
+   ![offpeak](assets/cate.JPG)
 
    The last 3 categories in the output above, show that they only have 11, 3 and 2 occurrences respectively. Considering that the dataset has about 14000 rows, this means that these        dummy variables will be almost entirely 0 and so will not add much predictive power to the model at all (since they're almost entirely a constant value and provide very little).
 
@@ -179,7 +180,7 @@ Key steps in this notebook include:.
    df.head()
    ```
 
-   ![offpeak](assets/)
+   ![offpeak](assets/months.JPG)
 
 ## Notebook
 
