@@ -92,11 +92,12 @@ Key steps in this notebook include:.
 
      ![offpeak](assets/tenure.JPG)
 
-     We can see that companies who have only been a client for 4 or less months are much more likely to churn compared to companies that have been a client for longer. Interestingly,         the difference between 4 and 5 months is about 4%, which represents a large jump in likelihood for a customer to churn compared to the other differences between ordered tenure           values. Perhaps this reveals that getting a customer to over 4 months tenure is actually a large milestone with respect to keeping them as a long term customer.
+     Companies who have only been a client for 4 or less months are much more likely to churn compared to companies that have been a client for longer. Interestingly, the difference          between 4 and 5 months is about 4%, which represents a large jump in likelihood for a customer to churn compared to the other differences between ordered tenure values. Perhaps          this reveals that getting a customer to over 4 months tenure is actually a large milestone with respect to keeping them as a long term customer.
 
      This is an interesting feature to keep for modelling because clearly how long you've been a client, has a influence on the chance of a client churning.
    
 2. **Transforming dates into months:**
+
    Dates as a datetime object are not useful for a predictive model, so we needed to use the datetimes to create some other features that may hold some predictive power.
 
    - Using intuition, you could assume that a client who has been an active client of PowerCo for a longer amount of time may have more loyalty to the brand and is more likely to stay.       Whereas a newer client may be more volatile. Hence the addition of the months_activ feature.
@@ -140,10 +141,10 @@ Key steps in this notebook include:.
    
    ![offpeak](assets/dummy.JPG)
 
-4. **Transforming Boolean data:**
+3. **Transforming Boolean data:**
 
    has_gas
-   We simply want to transform this column from being categorical to being a binary flag
+   Transforming columns from being categorical to being a binary flag
 
    ```python
    df['has_gas'] = df['has_gas'].replace(['t', 'f'], [1, 0])
@@ -154,7 +155,7 @@ Key steps in this notebook include:.
    If a customer also buys gas from PowerCo, it shows that they have multiple products and are a loyal customer to the brand. Hence, it is no surprise that customers who do not buy gas     are almost 2% more likely to churn than customers who also buy gas from PowerCo. Hence, this is a useful feature.
 
 
-6. **Transforming categorical data:**
+4. **Transforming categorical data:**
 
    To encode categorical features, dummy variables AKA one hot encoding is used. This create a new feature for every unique value of a categorical column, and fills this column with        either a 1 or a 0 to indicate that this company does or does not belong to this category.
 
