@@ -17,9 +17,7 @@ Key steps in this notebook include:.
    - Difference Between Off-Peak Prices in December and Preceding January
      This feature was created to determine price changes across the entire year for each company. It helps to capture significant fluctuations in energy prices between December and the        preceding January, revealing potential seasonal patterns.
 
-     ![offpeak](assets/)
-
-     ```python
+     ![offpeak](assets/offpeak.JPG)
      
    
 2. **Encoding Categorical Variables:**
