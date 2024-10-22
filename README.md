@@ -250,16 +250,12 @@ plt.show()
 
 The detailed code and explanations for the feature engineering and data transformation steps can be found in the Jupyter Notebook:
 
-[![Feature Engineering & Data Transformation Notebook](https://img.shields.io/badge/Notebook-Feature_Engineering-blue)](./link_to_your_notebook.ipynb)
+[![Feature Engineering & Data Transformation Notebook](https://img.shields.io/badge/Notebook-Feature_Engineering-blue)](https://colab.research.google.com/drive/1j4COMSVI1q5uULsLL9oGTZLM23ifbVAo#scrollTo=6JVJsvLPj9zl)
 
 You can also view the notebook directly in Google Colab using the badge below:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/your_repo_link/your_notebook.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1j4COMSVI1q5uULsLL9oGTZLM23ifbVAo#scrollTo=6JVJsvLPj9zl)
 
-## Libraries Used
-- `pandas` for data manipulation.
-- `scikit-learn` for transformations like encoding and scaling.
-- `numpy` for numerical computations.
 
 ## Next Steps
 Once the dataset is transformed, it is ready for the next step: **Model Training & Evaluation**. Check out the [model training notebook](./link_to_model_training_notebook.ipynb) for more details.
