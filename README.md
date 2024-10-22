@@ -183,6 +183,69 @@ Key steps in this notebook include:.
 
    ![offpeak](assets/months.JPG)
 
+4. **Handling skewness:**
+
+   The reason why we need to treat skewness is because some predictive models have inherent assumptions about the distribution of the features that are being supplied to it. Such models    are called parametric models, and they typically assume that all variables are both independent and normally distributed.
+
+   There are many ways that you can treat skewed variables. You can apply transformations such as:
+
+   - Square root
+   - Cubic root
+   - Logarithm
+     
+   For this case I used the 'Logarithm' transformation for the positively skewed features.
+
+   ```python
+   skewed = [
+    'cons_12m', 
+    'cons_gas_12m', 
+    'cons_last_month',
+    'forecast_cons_12m', 
+    'forecast_cons_year', 
+    'forecast_discount_energy',
+    'forecast_meter_rent_12m', 
+    'forecast_price_energy_off_peak',
+    'forecast_price_energy_peak', 
+    'forecast_price_pow_off_peak'
+]
+
+df[skewed].describe()
+```
+
+![offpeak](assets/skew.JPG)
+
+The standard deviation for most of these features is quite high.
+
+```python
+# Apply log10 transformation
+df["cons_12m"] = np.log10(df["cons_12m"] + 1)
+df["cons_gas_12m"] = np.log10(df["cons_gas_12m"] + 1)
+df["cons_last_month"] = np.log10(df["cons_last_month"] + 1)
+df["forecast_cons_12m"] = np.log10(df["forecast_cons_12m"] + 1)
+df["forecast_cons_year"] = np.log10(df["forecast_cons_year"] + 1)
+df["forecast_meter_rent_12m"] = np.log10(df["forecast_meter_rent_12m"] + 1)
+df["imp_cons"] = np.log10(df["imp_cons"] + 1)
+
+df[skewed].describe()
+```
+
+![offpeak](assets/skewed.JPG)
+
+For the majority of the features, their standard deviation is much lower after transformation. This is a good thing, it shows that these features are more stable and predictable now.
+
+```python
+fig, axs = plt.subplots(nrows=3, figsize=(18, 20))
+# Plot histograms
+sns.distplot((df["cons_12m"].dropna()), ax=axs[0])
+sns.distplot((df[df["has_gas"]==1]["cons_gas_12m"].dropna()), ax=axs[1])
+sns.distplot((df["cons_last_month"].dropna()), ax=axs[2])
+plt.show()
+```
+
+![offpeak](assets/dis1.JPG)
+![offpeak](assets/dis2.JPG)
+![offpeak](assets/dis3.JPG)
+
 ## Notebook
 
 The detailed code and explanations for the feature engineering and data transformation steps can be found in the Jupyter Notebook:
