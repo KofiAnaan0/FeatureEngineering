@@ -73,9 +73,10 @@ Key steps in this notebook include:.
           'off_peak_peak_fix_mean_diff', 
           'peak_mid_peak_fix_mean_diff', 
           'off_peak_mid_peak_fix_mean_diff'
-      ]
-      df = pd.merge(df, mean_prices[columns], on='id')
-      df.head()
+         ]
+         df = pd.merge(df, mean_prices[columns], on='id')
+         df.head()
+       ```
 
      ![offpeak](assets/)
 
@@ -94,14 +95,91 @@ Key steps in this notebook include:.
 
        This is an interesting feature to keep for modelling because clearly how long you've been a client, has a influence on the chance of a client churning.
    
-2. **Encoding Categorical Variables:**
-   - One-hot encoding and label encoding for categorical data.
+2. **Transforming dates into months**
+   Dates as a datetime object are not useful for a predictive model, so we needed to use the datetimes to create some other features that may hold some predictive power.
+
+   Using intuition, you could assume that a client who has been an active client of PowerCo for a longer amount of time may have more loyalty to the brand and is more likely to stay.       Whereas a newer client may be more volatile. Hence the addition of the months_activ feature.
    
-3. **Feature Scaling:**
-   - Standardization (Z-score scaling) and normalization (min-max scaling).
+   As well as this, if we think from the perspective of a client with PowerCo, if you're coming toward the end of your contract with PowerCo your thoughts could go a few ways. You could    be looking for better deals for when your contract ends, or you might want to see out your contract and sign another one. One the other hand if you've only just joined, you may have     a period where you're allowed to leave if you're not satisfied. Furthermore, if you're in the middle of your contract, their may be charges if you wanted to leave, deterring clients     from churning mid-way through their agreement. So, I think months_to_end will be an interesting feature because it may reveal patterns and behaviours about timing of churn.
    
-4. **Feature Creation:**
-   - Creating interaction terms, polynomial features, or domain-specific transformations.
+   My belief is that if a client has made recent updates to their contract, they are more likely to be satisfied or at least they have received a level of customer service to update or     change their existing services. I believe this to be a positive sign, they are an engaged customer, and so I believe months_modif_prod will be an interesting feature to include          because it shows the degree of how 'engaged' a client is with PowerCo.
+   
+   Finally the number of months since a client last renewed a contract I believe will be an interesting feature because once again, it shows the degree to which that client is engaged.     It also goes a step further than just engagement, it shows a level of commitment if a client renews their contract. For this reason, I believe months_renewal will be a good feature      to include.
+
+   ```python
+   # Converting dates to months
+   def convert_months(reference_date, df, column):
+       """
+       Input a column with timedeltas and return months
+       """
+       time_delta = reference_date - df[column]
+       months = ((time_delta / np.timedelta64(1, 'D'))/ 30.44).astype(int)
+       return months
+
+   # Create reference date
+   reference_date = datetime(2016, 1, 1)
+   
+   # Create columns
+   df['months_activ'] = convert_months(reference_date, df, 'date_activ')
+   df['months_to_end'] = -convert_months(reference_date, df, 'date_end')
+   df['months_modif_prod'] = convert_months(reference_date, df, 'date_modif_prod')
+   df['months_renewal'] = convert_months(reference_date, df, 'date_renewal')
+
+   # We no longer need the datetime columns that we used for feature engineering, so we can drop them
+   remove = [
+       'date_activ',
+       'date_end',
+       'date_modif_prod',
+       'date_renewal'
+   ]
+   
+   df = df.drop(columns=remove)
+   df.head()
+   ```
+   
+   ![offpeak](assets/)
+
+4. **Transforming Boolean data:**
+
+   has_gas
+   We simply want to transform this column from being categorical to being a binary flag
+
+   ```python
+   df['has_gas'] = df['has_gas'].replace(['t', 'f'], [1, 0])
+   df.groupby(['has_gas']).agg({'churn': 'mean'})
+   ```
+   ![offpeak](assets/)
+
+   If a customer also buys gas from PowerCo, it shows that they have multiple products and are a loyal customer to the brand. Hence, it is no surprise that customers who do not buy gas     are almost 2% more likely to churn than customers who also buy gas from PowerCo. Hence, this is a useful feature.
+
+
+6. **Transforming categorical data:**
+
+   To encode categorical features, dummy variables AKA one hot encoding is used. This create a new feature for every unique value of a categorical column, and fills this column with        either a 1 or a 0 to indicate that this company does or does not belong to this category.
+
+   channel_sales
+
+   ```python
+   # Transform into categorical type
+   df['channel_sales'] = df['channel_sales'].astype('category')
+   
+   # How many categories are within this column
+   df['channel_sales'].value_counts()
+   ```
+
+   ![offpeak](assets/)
+
+   The last 3 categories in the output above, show that they only have 11, 3 and 2 occurrences respectively. Considering that the dataset has about 14000 rows, this means that these        dummy variables will be almost entirely 0 and so will not add much predictive power to the model at all (since they're almost entirely a constant value and provide very little).
+
+   For this reason, I dropped these 3 dummy variables.
+
+   ```python
+   df = pd.get_dummies(df, columns=['channel_sales'], prefix='channel')
+   df = df.drop(columns=['channel_sddiedcslfslkckwlfkdpoeeailfpeds', 'channel_epumfxlbckeskwekxbiuasklxalciiuu', 'channel_fixdbufsefwooaasfcxdxadsiekoceaa'])
+   df.head()
+   ```
+
+   ![offpeak](assets/)
 
 ## Notebook
 
