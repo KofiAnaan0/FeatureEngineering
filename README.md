@@ -33,7 +33,7 @@ Key steps in this notebook include:.
       diff.head()
      ```
 
-     ![offpeak](assets/)
+     ![offpeak](assets/offset.JPG)
 
      ```python
      # Merging the engineered feature
